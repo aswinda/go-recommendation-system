@@ -1,12 +1,13 @@
 package main
 
 import (
-    "errors"
 	"bufio"
     "encoding/csv"
     "fmt"
     "io"
-    "os"
+	"os"
+	"strconv"
+	"log"
 )
 
 func DotProduct(a, b []float64) (float64, error) {
@@ -19,12 +20,17 @@ func DotProduct(a, b []float64) (float64, error) {
 	return product, nil
 }
 
+type Like struct {
+    UserID      float64  `json:"user_id"`
+    MusicID   	float64  `json:"music_id"`
+}
+
 // main function to boot up everything
 func main() {
     file, _ := os.Open("data/music_like.csv")
     reader := csv.NewReader(bufio.NewReader(file))
 
-    var music []Music
+    var likes []Like
 
     for {
         line, error := reader.Read()
@@ -34,12 +40,13 @@ func main() {
             log.Fatal(error)
         }
 
-        music = append(music, Music{
-            ID:         line[0],
-            Title:      line[1],
-            Artist:      line[2],
+		userId, _ := strconv.ParseFloat(line[0], 64)
+		musicId, _ := strconv.ParseFloat(line[1], 64)
+        likes = append(likes, Like{
+            UserID:		userId,
+            MusicID:	musicId,
         })
     }
 
-    fmt.Println(string(result))
+    fmt.Printf("%v", likes)
 }
